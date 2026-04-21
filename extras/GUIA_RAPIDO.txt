@@ -1,0 +1,197 @@
+⚡ GUIA ULTRA-RÁPIDO (2 MINUTOS)
+═════════════════════════════════
+
+🎯 SEUS 3 PRIMEIROS PASSOS:
+
+1️⃣ BANCO DE DADOS (1 min)
+   ✏️ Abra phpMyAdmin: http://localhost/phpmyadmin
+   ✏️ Crie banco: costura_atelier
+   ✏️ Importe: sql/schema.sql
+   ✏️ Importe: sql/seed.sql (opcional)
+
+2️⃣ CRIAR USUÁRIO (30 seg)
+   ✏️ Acesse: http://localhost/costura/criar_usuario.php
+   ✏️ Preencha: Nome, Email, Senha
+   ✏️ Clique: "Criar Usuário"
+
+3️⃣ FAZER LOGIN (30 seg)
+   ✏️ Acesse: http://localhost/costura/admin/login.php
+   ✏️ Use credenciais criadas
+   ✏️ Clique: "Entrar"
+
+✅ PRONTO! Sistema está funcional!
+
+
+═════════════════════════════════════════════════════════════════
+
+📱 ACESSAR:
+
+   Painel Admin:      http://localhost/costura/admin/
+   Catálogo Público:  http://localhost/costura/public/
+   Página Atalhos:    http://localhost/costura/inicio.html
+   Checklist:         http://localhost/costura/checklist.html
+   Verificação:       http://localhost/costura/verificacao.php
+
+
+═════════════════════════════════════════════════════════════════
+
+🔧 SE ALGO DER ERRADO:
+
+❌ Erro de conexão BD?
+   └─ Verifique em verificacao.php
+
+❌ Upload não funciona?
+   └─ No terminal (como admin):
+      Windows: xcacls "C:\xampp\htdocs\costura\assets\uploads" 
+               /grant:r Everyone:F
+
+❌ Login não funciona?
+   └─ Banco foi importado? Usuário foi criado?
+
+❌ Imagens não aparecem?
+   └─ Pasta assets/uploads/ foi criada?
+
+
+═════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTAÇÃO RÁPIDA:
+
+   Leitura Rápida (5 min):  INSTALACAO_RAPIDA.md
+   Tudo Detalhado (20 min): README.md
+   Primeiros Passos (15 min): PRIMEIROS_PASSOS.md
+   Estrutura Técnica (15 min): ARQUITETURA.md
+   API Endpoints (10 min): API_DOCS.md
+
+
+═════════════════════════════════════════════════════════════════
+
+🎯 DADOS DE TESTE (se importou seed.sql):
+
+   Admin Login:
+   Email: admin@costura.com
+   Senha: admin123
+
+   (TROQUE A SENHA DEPOIS!)
+
+   Database já virá com:
+   ✓ 6 produtos de teste
+   ✓ 8 matérias-primas
+   ✓ 4 clientes
+   ✓ 4 pedidos
+   ✓ 10 tarefas de produção
+
+
+═════════════════════════════════════════════════════════════════
+
+💡 DICAS INICIAIS:
+
+✓ Personalize contatos em public/index.php (linha ~210)
+✓ Altere cores em assets/css/style.css (linha ~30)
+✓ Adicione seu logo em includes/navbar.php
+✓ Comece adicionando suas matérias-primas no Estoque
+✓ Cadastre seus produtos principais
+✓ Teste criando um pedido
+
+
+═════════════════════════════════════════════════════════════════
+
+🆘 PRECISA DE AJUDA?
+
+   1. Leia PRIMEIROS_PASSOS.md (FAQ detalhado)
+   2. Execute verificacao.php (diagnóstico automático)
+   3. Consulte README.md (documentação completa)
+   4. Revise ARQUITETURA.md (entender fluxos)
+
+
+═════════════════════════════════════════════════════════════════
+
+✅ CHECKLIST FINAL:
+
+   [  ] Banco criado
+   [  ] Schema importado
+   [  ] Usuário criado
+   [  ] Conseguiu fazer login
+   [  ] Dashboard carregou
+   [  ] Catálogo público funciona
+   [  ] Sistema validado em verificacao.php
+
+   SIM EM TODOS? 🎉 ESTÁ PRONTO PARA USAR!
+
+
+═════════════════════════════════════════════════════════════════
+
+🚀 PRIMEIRA SEMANA DE USO:
+
+   DIA 1 (Setup):
+   ├─ Importar BD
+   ├─ Criar usuário
+   ├─ Explorar painel
+   
+   DIA 2 (Operacional):
+   ├─ Adicionar matérias-primas
+   ├─ Cadastrar 3-5 produtos
+   ├─ Criar 1 pedido de teste
+   
+   DIA 3+:
+   ├─ Começar a usar para trabalho real
+   ├─ Registrar pedidos de clientes
+   ├─ Gerenciar estoque
+   └─ Acompanhar financeiro
+
+
+═════════════════════════════════════════════════════════════════
+
+📊 ESTRUTURA DE PASTAS:
+
+   admin/         → Painel de controle
+   public/        → Catálogo (clientes)
+   includes/      → Componentes reutilizáveis
+   assets/        → CSS, JS, Imagens, Uploads
+   config/        → Configuração do banco
+   sql/           → Scripts do banco
+   docs/          → Documentação
+
+
+═════════════════════════════════════════════════════════════════
+
+🔐 SEGURANÇA BÁSICA:
+
+   ✓ Senhas são hashadas com bcrypt
+   ✓ Banco protegido contra SQL injection
+   ✓ Trocar senha padrão na primeira vez
+   ✓ Fazer backup do banco regularmente
+   ✓ Usar HTTPS em produção
+
+
+═════════════════════════════════════════════════════════════════
+
+📞 SUPORTE RÁPIDO:
+
+   → Verificação de sistema: http://localhost/costura/verificacao.php
+   → Consultar este arquivo: GUIA_RAPIDO.txt
+   → Documentação completa: README.md
+   → Checklist interativo: http://localhost/costura/checklist.html
+
+
+═════════════════════════════════════════════════════════════════
+
+🎉 PARABÉNS!
+
+   Seu sistema está pronto e funcional.
+   
+   Comece a usar agora:
+   → Admin:  http://localhost/costura/admin/
+   → Público: http://localhost/costura/public/
+
+   Dia 1 será aprender o sistema.
+   Dia 2 começará a economizar tempo.
+   Semana 1 verstá a diferença no seu negócio.
+
+
+═════════════════════════════════════════════════════════════════
+
+Versão: 1.0.0
+Data: 11 de abril de 2026
+Sistema: Costura Ateliê ✨
+
+Aproveite! 🧵😊

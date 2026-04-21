@@ -1,0 +1,17 @@
+RewriteEngine On
+RewriteBase /costura/
+
+# Servir arquivos e pastas reais diretamente
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Páginas da raiz vão para public/index.php
+RewriteRule ^$ public/index.php [QSA,L]
+
+# Rotas do admin permanecem na pasta admin
+RewriteRule ^admin/?$ admin/index.php [QSA,L]
+RewriteRule ^admin/(.*)$ admin/$1 [QSA,L]
+
+# Todas as outras requisições vão para public/
+RewriteRule ^(.*)$ public/$1 [QSA,L]
