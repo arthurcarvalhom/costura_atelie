@@ -1,8 +1,0 @@
-Aqui eu to colocando coisas para jogar na IA e ela resolver, algumas será apenas umas ideias que eu tive, ai faço manualmente ou na IA, tanto faz
-
-1. Quando eu estou como administrador e acabei de logar na conta, porém eu apenas saio da aba, e clico em "entrar", ele já entra automaticamente, não pedindo senha nem usuário, arrume isso, pois será muito fácil de alguem hackear esse sistema, pois ele não pede as informações do usuário novamente, e sim já entra direto na conta que estava anteriormente
-(Usuário)
-
-2. Quando eu estou no login do administrador, e aperto na aba catalogo, o login simplesmente some e eu fico sem a conta logada, isso poderá ser um problema mais adiante
-
-3. Tem que falar para ele deixar apenas o css dele, e fazer com que os que tenham um css somente da página, continue com este css, porém os que estão com o css da página sendo o mesmo do style.css, usar apenas o style.css

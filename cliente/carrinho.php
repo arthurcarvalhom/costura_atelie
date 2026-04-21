@@ -52,8 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover_item'])) {
 }
 
 // Fazer checkout
-if (isset($_GET['checkout']) && $_GET['checkout'] == '1') {
-    if (count($itens_carrinho) > 0) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
+    $itens_selecionados = $_POST['itens_selecionados'] ?? [];
+    if (count($itens_selecionados) > 0) {
         // Obter informações do cliente
         $stmt = $conn->prepare("SELECT email, telefone FROM clientes WHERE id = ?");
         $stmt->bind_param('i', $cliente_id);
@@ -62,10 +63,14 @@ if (isset($_GET['checkout']) && $_GET['checkout'] == '1') {
 
         // Preparar mensagem para WhatsApp
         $mensagem_wa = "Olá! Gostaria de encomendar os seguintes produtos:\n\n";
+        $total_selecionado = 0;
         foreach ($itens_carrinho as $item) {
-            $mensagem_wa .= "• " . $item['produto_nome'] . " (Qtd: " . $item['quantidade'] . ") - " . formatar_moeda($item['quantidade'] * $item['preco_unitario']) . "\n";
+            if (in_array($item['id'], $itens_selecionados)) {
+                $mensagem_wa .= "• " . $item['produto_nome'] . " (Qtd: " . $item['quantidade'] . ") - " . formatar_moeda($item['quantidade'] * $item['preco_unitario']) . "\n";
+                $total_selecionado += $item['quantidade'] * $item['preco_unitario'];
+            }
         }
-        $mensagem_wa .= "\nTotal: " . formatar_moeda($total);
+        $mensagem_wa .= "\nTotal: " . formatar_moeda($total_selecionado);
 
         // Redirecionar para WhatsApp
         $numero_whatsapp = '5511999999999'; // Alterar com número do negócio
@@ -78,176 +83,6 @@ if (isset($_GET['checkout']) && $_GET['checkout'] == '1') {
 $titulo_pagina = 'Carrinho';
 ?>
 <?php include __DIR__ . '/../includes/header.php'; ?>
-
-<style>
-    .carrinho-hero {
-        background: linear-gradient(135deg, var(--cor-primaria), #FF85B3);
-        color: white;
-        padding: 3rem 2rem;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .carrinho-hero h1 {
-        font-size: 2.5rem;
-        margin: 0 0 0.5rem;
-    }
-
-    .carrinho-hero p {
-        font-size: 1.1rem;
-        opacity: 0.95;
-        margin: 0;
-    }
-
-    .carrinho-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .carrinho-vazio {
-        text-align: center;
-        padding: 3rem 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .carrinho-vazio i {
-        font-size: 4rem;
-        color: #ddd;
-        margin-bottom: 1rem;
-    }
-
-    .carrinho-vazio p {
-        font-size: 1.2rem;
-        color: #666;
-        margin-bottom: 2rem;
-    }
-
-    .carrinho-itens {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
-    .carrinho-item {
-        padding: 1.5rem;
-        border-bottom: 1px solid #eee;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 2rem;
-    }
-
-    .carrinho-item:last-child {
-        border-bottom: none;
-    }
-
-    .item-info {
-        flex: 1;
-    }
-
-    .item-nome {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 0.5rem;
-    }
-
-    .item-detalhes {
-        font-size: 0.95rem;
-        color: #666;
-    }
-
-    .item-preco-total {
-        font-size: 1.3rem;
-        font-weight: bold;
-        color: var(--cor-primaria);
-        min-width: 120px;
-        text-align: right;
-    }
-
-    .item-acoes {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-    }
-
-    .btn-remover {
-        background: #f44336;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9rem;
-    }
-
-    .btn-remover:hover {
-        background: #d32f2f;
-    }
-
-    .carrinho-resumo {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-        margin-top: 2rem;
-        text-align: right;
-    }
-
-    .resumo-linha {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-    }
-
-    .resumo-total {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--cor-primaria);
-        border-top: 2px solid #eee;
-        padding-top: 1rem;
-    }
-
-    .carrinho-acoes {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-        justify-content: center;
-    }
-
-    .btn-voltar, .btn-finalizar {
-        padding: 0.85rem 1.5rem;
-        border-radius: 4px;
-        text-decoration: none;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-
-    .btn-voltar {
-        background: #ccc;
-        color: #333;
-    }
-
-    .btn-voltar:hover {
-        background: #bbb;
-    }
-
-    .btn-finalizar {
-        background: linear-gradient(135deg, var(--cor-primaria), #FF85B3);
-        color: white;
-    }
-
-    .btn-finalizar:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
-    }
-</style>
 
 <div class="carrinho-hero">
     <h1><i class="fas fa-shopping-cart"></i> Carrinho de Compras</h1>
@@ -264,33 +99,43 @@ $titulo_pagina = 'Carrinho';
             </a>
         </div>
     <?php else: ?>
-        <div class="carrinho-itens">
-            <?php foreach ($itens_carrinho as $item): ?>
-                <div class="carrinho-item">
-                    <div class="item-info">
-                        <div class="item-nome"><?php echo htmlspecialchars($item['produto_nome']); ?></div>
-                        <div class="item-detalhes">
-                            Quantidade: <strong><?php echo $item['quantidade']; ?></strong> | 
-                            Preço unitário: <strong><?php echo formatar_moeda($item['preco_unitario']); ?></strong>
-                        </div>
-                    </div>
-                    <div class="item-preco-total">
-                        <?php echo formatar_moeda($item['quantidade'] * $item['preco_unitario']); ?>
-                    </div>
-                    <a href="<?php echo SITE_URL; ?>cliente/carrinho.php?remover=<?php echo $item['id']; ?>" class="btn-remover" onclick="return confirm('Tem certeza que deseja remover este item?')">
-                        <i class="fas fa-trash"></i> Remover
-                    </a>
+        <form id="carrinho-form" method="POST" action="<?php echo SITE_URL; ?>cliente/carrinho.php">
+            <div class="carrinho-itens">
+                <div class="carrinho-header">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="selecionar-todos" style="width: 18px; height: 18px;">
+                        <span style="font-weight: 600; color: #333;">Selecionar Todos</span>
+                    </label>
                 </div>
-            <?php endforeach; ?>
-        </div>
+                <?php foreach ($itens_carrinho as $item): ?>
+                    <div class="carrinho-item">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <input type="checkbox" name="itens_selecionados[]" value="<?php echo $item['id']; ?>" class="item-checkbox" style="width: 18px; height: 18px;" checked>
+                            <div class="item-info">
+                                <div class="item-nome"><?php echo htmlspecialchars($item['produto_nome']); ?></div>
+                                <div class="item-detalhes">
+                                    Quantidade: <strong><?php echo $item['quantidade']; ?></strong> | 
+                                    Preço unitário: <strong><?php echo formatar_moeda($item['preco_unitario']); ?></strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-preco-total">
+                            <?php echo formatar_moeda($item['quantidade'] * $item['preco_unitario']); ?>
+                        </div>
+                        <a href="<?php echo SITE_URL; ?>cliente/carrinho.php?remover=<?php echo $item['id']; ?>" class="btn-remover" onclick="return confirm('Tem certeza que deseja remover este item?')">
+                            <i class="fas fa-trash"></i> Remover
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
 
         <div class="carrinho-resumo">
             <div class="resumo-linha">
-                <span>Subtotal (<?php echo count($itens_carrinho); ?> itens):</span>
-                <span><?php echo formatar_moeda($total); ?></span>
+                <span>Subtotal (<span id="itens-count"><?php echo count($itens_carrinho); ?></span> itens):</span>
+                <span id="subtotal"><?php echo formatar_moeda($total); ?></span>
             </div>
             <div class="resumo-total">
-                Total: <?php echo formatar_moeda($total); ?>
+                Total: <span id="total"><?php echo formatar_moeda($total); ?></span>
             </div>
         </div>
 
@@ -298,10 +143,11 @@ $titulo_pagina = 'Carrinho';
             <a href="<?php echo SITE_URL; ?>public/index.php" class="btn-voltar">
                 <i class="fas fa-arrow-left"></i> Continuar Comprando
             </a>
-            <a href="<?php echo SITE_URL; ?>cliente/carrinho.php?checkout=1" class="btn-finalizar">
-                <i class="fab fa-whatsapp"></i> Finalizar Compra
-            </a>
+            <button type="submit" name="checkout" value="1" class="btn-finalizar" id="btn-finalizar">
+                <i class="fab fa-whatsapp"></i> Finalizar Compra (<span id="checkout-count"><?php echo count($itens_carrinho); ?></span> itens)
+            </button>
         </div>
+        </form>
     <?php endif; ?>
 
     <div style="text-align: center; margin-top: 3rem;">
@@ -310,5 +156,72 @@ $titulo_pagina = 'Carrinho';
         </a>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    const selectAllCheckbox = document.getElementById('selecionar-todos');
+    const subtotalElement = document.getElementById('subtotal');
+    const totalElement = document.getElementById('total');
+    const itensCountElement = document.getElementById('itens-count');
+    const checkoutCountElement = document.getElementById('checkout-count');
+    const btnFinalizar = document.getElementById('btn-finalizar');
+
+    // Dados dos itens (passados do PHP)
+    const itensData = <?php echo json_encode(array_map(function($item) {
+        return [
+            'id' => $item['id'],
+            'preco' => $item['quantidade'] * $item['preco_unitario']
+        ];
+    }, $itens_carrinho)); ?>;
+
+    function atualizarTotal() {
+        let total = 0;
+        let count = 0;
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const itemId = parseInt(checkbox.value);
+                const itemData = itensData.find(item => item.id === itemId);
+                if (itemData) {
+                    total += itemData.preco;
+                    count++;
+                }
+            }
+        });
+
+        subtotalElement.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+        totalElement.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+        itensCountElement.textContent = count;
+        checkoutCountElement.textContent = count;
+
+        // Desabilitar botão se nenhum item selecionado
+        btnFinalizar.disabled = count === 0;
+        btnFinalizar.style.opacity = count === 0 ? '0.5' : '1';
+    }
+
+    // Event listener para checkboxes individuais
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            atualizarTotal();
+            // Verificar se todos estão selecionados
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            const noneChecked = Array.from(checkboxes).every(cb => !cb.checked);
+            selectAllCheckbox.checked = allChecked;
+            selectAllCheckbox.indeterminate = !allChecked && !noneChecked;
+        });
+    });
+
+    // Event listener para "Selecionar Todos"
+    selectAllCheckbox.addEventListener('change', function() {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+        atualizarTotal();
+    });
+
+    // Inicializar
+    atualizarTotal();
+});
+</script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

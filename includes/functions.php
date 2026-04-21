@@ -19,6 +19,14 @@ function verificar_autenticacao() {
         header('Location: ' . ADMIN_URL . 'login.php');
         exit();
     }
+    
+    // Verificar timeout da sessão
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > SESSION_TIMEOUT)) {
+        session_destroy();
+        header('Location: ' . ADMIN_URL . 'login.php');
+        exit();
+    }
+    $_SESSION['last_activity'] = time();
 }
 
 function fazer_login($email, $senha) {

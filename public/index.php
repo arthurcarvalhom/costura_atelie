@@ -87,6 +87,12 @@ if ($busca) {
             </a>
         </div>
         <div class="client-navbar-right">
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <a href="<?php echo ADMIN_URL; ?>" style="color: #007bff;">
+                    <i class="fas fa-cog"></i> Painel Admin
+                </a>
+                <span style="color: #999;">|</span>
+            <?php endif; ?>
             <?php if (isset($_SESSION['cliente_id'])): ?>
                 <a href="<?php echo SITE_URL; ?>cliente/carrinho.php" style="position: relative;">
                     <i class="fas fa-shopping-cart"></i> Carrinho
@@ -353,7 +359,7 @@ if ($busca) {
             <a href="mailto:contato@costura.com?subject=Contato%20via%20Catálogo" class="btn btn-primary" style="padding: 0.9rem 1.2rem;">
                 <i class="fas fa-envelope"></i> Enviar Email
             </a>
-            <a href="https://wa.me/5511999999999?text=Olá!%20Gostaria%20de%20receber%20informações%20sobre%20os%20produtos." target="_blank" class="btn btn-secondary" style="padding: 0.9rem 1.2rem;">
+            <a href="https://wa.me/5561999999999?text=Olá!%20Gostaria%20de%20receber%20informações%20sobre%20os%20produtos." target="_blank" class="btn btn-secondary" style="padding: 0.9rem 1.2rem;">
                 <i class="fab fa-whatsapp"></i> WhatsApp
             </a>
         </div>

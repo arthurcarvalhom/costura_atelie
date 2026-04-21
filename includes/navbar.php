@@ -28,7 +28,7 @@
             <li><a href="<?php echo ADMIN_URL; ?>financeiro.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'financeiro.php' ? 'active' : ''; ?>">
                 <i class="fas fa-chart-pie"></i> Financeiro
             </a></li>
-            <li><a href="<?php echo SITE_URL; ?>" class="nav-link" title="Ver catálogo público">
+            <li><a href="<?php echo SITE_URL; ?>" class="nav-link" title="Ver catálogo público" target="_blank">
                 <i class="fas fa-eye"></i> Catálogo
             </a></li>
         </ul>
