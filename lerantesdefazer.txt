@@ -1,0 +1,2 @@
+1. ajustar o criar usuario de admin para ter que colocar o cpf
+2. faça com que o admin consiga logar no login.php do cliente, assim, irá priorizar o tempo, fazendo com que ele não precise ir em outra área fazer o seu login, apenas colocando suas informações no login porém, no do cliente

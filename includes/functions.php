@@ -48,6 +48,53 @@ function fazer_login($email, $senha) {
     return false;
 }
 
+function fazer_login_cliente($email, $senha) {
+    global $conn;
+    
+    $stmt = $conn->prepare("SELECT id, nome, senha FROM clientes WHERE email = ? AND ativo = 1");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 1) {
+        $cliente = $result->fetch_assoc();
+        if (password_verify($senha, $cliente['senha'])) {
+            $_SESSION['cliente_id'] = $cliente['id'];
+            $_SESSION['cliente_nome'] = $cliente['nome'];
+            return true;
+        }
+    }
+    return false;
+}
+
+function fazer_login_unificado($email, $senha) {
+    global $conn;
+    
+    // Primeiro tenta login como admin/usuário
+    $stmt = $conn->prepare("SELECT id, nome, senha, 'admin' as tipo FROM usuarios WHERE email = ? AND ativo = 1
+                           UNION 
+                           SELECT id, nome, senha, 'cliente' as tipo FROM clientes WHERE email = ? AND ativo = 1");
+    $stmt->bind_param("ss", $email, $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 1) {
+        $usuario = $result->fetch_assoc();
+        if (password_verify($senha, $usuario['senha'])) {
+            if ($usuario['tipo'] === 'admin') {
+                $_SESSION['usuario_id'] = $usuario['id'];
+                $_SESSION['usuario_nome'] = $usuario['nome'];
+                return 'admin';
+            } else {
+                $_SESSION['cliente_id'] = $usuario['id'];
+                $_SESSION['cliente_nome'] = $usuario['nome'];
+                return 'cliente';
+            }
+        }
+    }
+    return false;
+}
+
 function fazer_logout() {
     session_destroy();
     header('Location: ' . ADMIN_URL . 'login.php');
@@ -275,7 +322,7 @@ function adicionar_item_pedido($pedido_id, $produto_id, $quantidade, $preco) {
         VALUES (?, ?, ?, ?)
     ");
     
-    $stmt->bind_param("iid", $pedido_id, $produto_id, $quantidade, $preco);
+    $stmt->bind_param("iiid", $pedido_id, $produto_id, $quantidade, $preco);
     return $stmt->execute();
 }
 

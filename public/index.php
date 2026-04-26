@@ -5,6 +5,7 @@ $titulo_pagina = 'Catálogo';
 $categorias = obter_categorias();
 $filtro_categoria = $_GET['categoria'] ?? '';
 $busca = $_GET['busca'] ?? '';
+$admin_view = isset($_GET['admin_view']) && $_GET['admin_view'] == '1' && isset($_SESSION['usuario_id']);
 
 $produtos = obter_produtos($filtro_categoria);
 
@@ -19,102 +20,76 @@ if ($busca) {
 ?>
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
-<!-- Navbar para Cliente -->
-<style>
-    .client-navbar {
-        background: white;
-        border-bottom: 1px solid #eee;
-        padding: 1rem 0;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-
-    .client-navbar .max-width {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .client-navbar-left {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-        flex: 1;
-    }
-
-    .client-navbar-right {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .client-navbar a {
-        text-decoration: none;
-        color: #333;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .client-navbar a:hover {
-        color: var(--cor-primaria);
-    }
-
-    .client-navbar .btn {
-        margin: 0;
-    }
-</style>
-
+<!-- Navbar Premium para Cliente -->
 <div class="client-navbar">
     <div class="max-width">
-        <div class="client-navbar-left">
-            <a href="<?php echo SITE_URL; ?>" style="font-size: 1.1rem; color: var(--cor-primaria);">
-                <i class="fas fa-needle"></i> Costura Ateliê
+        <div class="client-navbar-left" id="clientMenu">
+            <a href="<?php echo SITE_URL; ?>" class="logo">
+                <i class="fas fa-heart"></i> Costura Ateliê
             </a>
             <a href="<?php echo SITE_URL; ?>public/#catalogo">
                 <i class="fas fa-th-large"></i> Catálogo
             </a>
-            <a href="<?php echo SITE_URL; ?>public/#sobre">
+            <a href="<?php echo SITE_URL; ?>public/#sobre-nos">
                 <i class="fas fa-info-circle"></i> Sobre
             </a>
-            <a href="<?php echo SITE_URL; ?>public/#contato">
-                <i class="fas fa-envelope"></i> Contato
-            </a>
         </div>
+
+        <!-- Menu Toggle Mobile -->
+        <button class="client-menu-toggle" onclick="toggleClientMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <div class="client-navbar-right">
             <?php if (isset($_SESSION['usuario_id'])): ?>
-                <a href="<?php echo ADMIN_URL; ?>" style="color: #007bff;">
+                <a href="<?php echo ADMIN_URL; ?>" class="btn btn-admin">
                     <i class="fas fa-cog"></i> Painel Admin
                 </a>
-                <span style="color: #999;">|</span>
+                <span class="divider">|</span>
             <?php endif; ?>
             <?php if (isset($_SESSION['cliente_id'])): ?>
-                <a href="<?php echo SITE_URL; ?>cliente/carrinho.php" style="position: relative;">
+                <a href="<?php echo SITE_URL; ?>cliente/carrinho.php" class="cart-link">
                     <i class="fas fa-shopping-cart"></i> Carrinho
+                    <?php
+                    $itens_carrinho = isset($_SESSION['cliente_id']) ? contar_itens_carrinho($_SESSION['cliente_id']) : 0;
+                    if ($itens_carrinho > 0):
+                    ?>
+                    <span class="cart-badge"><?php echo $itens_carrinho; ?></span>
+                    <?php endif; ?>
                 </a>
-                <span style="color: #999;">|</span>
-                <span style="color: #666;">
-                    <i class="fas fa-user"></i> <?php echo htmlspecialchars($_SESSION['cliente_nome']); ?>
+                <span class="divider">|</span>
+                <span class="user-info-client">
+                    <i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($_SESSION['cliente_nome']); ?>
                 </span>
-                <a href="<?php echo SITE_URL; ?>cliente/sair.php" style="color: #f44336;">
+                <a href="<?php echo SITE_URL; ?>cliente/sair.php" class="btn">
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </a>
-            <?php else: ?>
-                <a href="<?php echo SITE_URL; ?>cliente/login.php" class="btn btn-primary">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </a>
-                <a href="<?php echo SITE_URL; ?>criar_usuario.php?tipo=cliente" class="btn btn-secondary">
-                    <i class="fas fa-user-plus"></i> Cadastro
+            <?php elseif (!$admin_view): ?>
+                <a href="<?php echo SITE_URL; ?>cliente/login.php" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
                 </a>
             <?php endif; ?>
         </div>
     </div>
 </div>
+
+<script>
+// Toggle Menu Mobile Cliente
+function toggleClientMenu() {
+    const menu = document.getElementById('clientMenu');
+    menu.classList.toggle('active');
+}
+
+// Fechar menu ao clicar fora (mobile)
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('clientMenu');
+    const toggle = document.querySelector('.client-menu-toggle');
+
+    if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+        menu.classList.remove('active');
+    }
+});
+</script>
 
 <!-- Catálogo Público -->
 <style>
@@ -321,49 +296,6 @@ if ($busca) {
         <?php endif; ?>
     </div>
 
-    <!-- Informações -->
-    <div class="card mt-4" id="sobre" style="background: linear-gradient(135deg, var(--cor-primaria), #FF85B3); color: white;">
-        <h2 style="color: white; margin-bottom: 1rem;">
-            <i class="fas fa-info-circle"></i> Sobre Nós
-        </h2>
-        <p style="margin-bottom: 1rem;">
-            Somos um ateliê especializado em enxoval de bebê, criando produtos artesanais e personalizados com muito cuidado e qualidade.
-        </p>
-        <p style="margin-bottom: 1rem;">
-            Cada peça é feita sob encomenda, permitindo customização de cores, padrões e materiais de acordo com suas preferências.
-        </p>
-        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
-            <div>
-                <strong style="font-size: 1.1rem;">📞 Telefone:</strong><br>
-                <a href="tel:+5511999999999" style="color: white; text-decoration: none;">(61) 9 9999-9999</a>
-            </div>
-            <div>
-                <strong style="font-size: 1.1rem;">📧 Email:</strong><br>
-                <a href="mailto:contato@costura.com" style="color: white; text-decoration: none;">contato@costura.com</a>
-            </div>
-            <div>
-                <strong style="font-size: 1.1rem;">📍 Local:</strong><br>
-                Brasília - DF
-            </div>
-        </div>
-    </div>
-
-    <div class="card mt-4" id="contato" style="background: #ffffff; color: #333;">
-        <h2 style="margin-bottom: 1rem; color: var(--cor-primaria);">
-            <i class="fas fa-envelope"></i> Contato
-        </h2>
-        <p style="margin-bottom: 1rem;">
-            Envie sua mensagem para fazer encomendas, pedir orçamentos ou tirar dúvidas sobre nossos produtos.
-        </p>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <a href="mailto:contato@costura.com?subject=Contato%20via%20Catálogo" class="btn btn-primary" style="padding: 0.9rem 1.2rem;">
-                <i class="fas fa-envelope"></i> Enviar Email
-            </a>
-            <a href="https://wa.me/5561999999999?text=Olá!%20Gostaria%20de%20receber%20informações%20sobre%20os%20produtos." target="_blank" class="btn btn-secondary" style="padding: 0.9rem 1.2rem;">
-                <i class="fab fa-whatsapp"></i> WhatsApp
-            </a>
-        </div>
-    </div>
 </div>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
@@ -430,4 +362,29 @@ function mostrar_interface_carrinho(produto_id, produto_nome, preco) {
         window.location.href = '<?php echo SITE_URL; ?>criar_usuario.php?tipo=cliente';
     <?php endif; ?>
 }
+
+// Rolagem suave para as seções
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.client-navbar a[href*="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href.includes('#')) {
+                e.preventDefault();
+                const targetId = href.split('#')[1];
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    const headerOffset = 100;
+                    const elementPosition = targetElement.offsetTop;
+                    const offsetPosition = elementPosition - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+});
 </script>

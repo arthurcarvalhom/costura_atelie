@@ -117,116 +117,293 @@ $form_action = 'criar_usuario.php?tipo=' . $tipo;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($titulo); ?> - Costura Ateliê</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
+        /* Fundo */
+        body {
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fff0f6, #ffd9e8, #f7c6dc);
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #FF6B9D, #FF85B3);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(234, 54, 114, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(242, 126, 170, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Card Cadastro */
         .container {
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,.12);
             width: 100%;
-            max-width: 420px;
+            max-width: 500px;
+            padding: 3rem 2.5rem;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.6s ease-out;
         }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Título */
         h1 {
-            color: #FF6B9D;
-            margin-bottom: 0.75rem;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #ea3672;
+            margin-bottom: 0.5rem;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
-        p.subtitle {
-            color: #666;
+
+        h1 i {
+            color: #f27eaa;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+            font-weight: 400;
             text-align: center;
-            margin-bottom: 1.75rem;
-            font-size: 0.98rem;
+            margin-bottom: 2rem;
         }
+
+        /* Inputs */
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
+
         label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #333;
+            font-weight: 500;
+            color: #2b2b2b;
+            font-size: 0.95rem;
         }
+
         input {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 14px 16px;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
             font-size: 1rem;
-            transition: 0.3s;
+            font-family: inherit;
+            background: #ffffff;
+            color: #2b2b2b;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
         }
+
+        input::placeholder {
+            color: #adb5bd;
+            font-weight: 400;
+        }
+
         input:focus {
             outline: none;
-            border-color: #FF6B9D;
-            box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
+            border-color: #ea3672;
+            box-shadow: 0 0 0 3px rgba(234, 54, 114, 0.1);
+            transform: translateY(-1px);
         }
+
+        /* Botões */
         .btn {
             width: 100%;
-            padding: 0.85rem;
-            background: linear-gradient(135deg, #FF6B9D, #FF85B3);
-            color: white;
+            padding: 16px;
+            background: linear-gradient(45deg, #ea3672, #f27eaa);
+            color: #ffffff;
             border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: bold;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(234, 54, 114, 0.3);
         }
+
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+            box-shadow: 0 8px 25px rgba(234, 54, 114, 0.4);
         }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Alertas */
         .alert {
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1.25rem;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.4s ease-out;
         }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         .alert.success {
-            background: #C8E6C9;
-            color: #2E7D32;
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
         }
+
         .alert.error {
-            background: #FFCDD2;
-            color: #C62828;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            color: #c62828;
+            border-left: 4px solid #f44336;
         }
+
         .alert.info {
-            background: #B3E5FC;
-            color: #01579B;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
         }
+
+        .alert i {
+            font-size: 1.1rem;
+        }
+
+        /* Segurança */
+        .security-notice {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .security-notice i {
+            color: #ea3672;
+        }
+
+        /* Footer */
         .footer {
             text-align: center;
-            margin-top: 1.5rem;
-            color: #999;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .footer p {
+            margin-bottom: 0.5rem;
+            color: #6c757d;
             font-size: 0.9rem;
         }
+
         a {
-            color: #FF6B9D;
+            color: #ea3672;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
         }
+
         a:hover {
+            color: #d42b5f;
             text-decoration: underline;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 2rem 1.5rem;
+                max-width: 95%;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .subtitle {
+                font-size: 0.85rem;
+            }
+
+            input {
+                padding: 12px 14px;
+            }
+
+            .btn {
+                padding: 14px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1><?php echo htmlspecialchars($titulo); ?></h1>
+        <h1>
+            <i class="fas fa-user-plus"></i>
+            <?php echo htmlspecialchars($titulo); ?>
+        </h1>
         <p class="subtitle"><?php echo htmlspecialchars($subtitulo); ?></p>
 
         <?php if ($mensagem): ?>
-            <div class="alert <?php echo htmlspecialchars($tipo_mensagem); ?>"><?php echo htmlspecialchars($mensagem); ?></div>
+            <div class="alert <?php echo htmlspecialchars($tipo_mensagem); ?>">
+                <i class="fas fa-<?php echo $tipo_mensagem === 'success' ? 'check-circle' : ($tipo_mensagem === 'error' ? 'exclamation-triangle' : 'info-circle'); ?>"></i>
+                <span><?php echo htmlspecialchars($mensagem); ?></span>
+            </div>
         <?php endif; ?>
 
         
@@ -234,7 +411,7 @@ $form_action = 'criar_usuario.php?tipo=' . $tipo;
         <form method="POST" action="<?php echo htmlspecialchars($form_action); ?>">
             <div class="form-group">
                 <label for="nome">Nome Completo *</label>
-                <input type="text" id="nome" name="nome" required autofocus placeholder="Seu nome">
+                <input type="text" id="nome" name="nome" required autofocus placeholder="Seu nome completo">
             </div>
 
             <div class="form-group">
@@ -269,8 +446,16 @@ $form_action = 'criar_usuario.php?tipo=' . $tipo;
                 </div>
             <?php endif; ?>
 
-            <button type="submit" class="btn"><?php echo htmlspecialchars($botao); ?></button>
+            <button type="submit" class="btn">
+                <i class="fas fa-user-plus"></i>
+                <?php echo htmlspecialchars($botao); ?>
+            </button>
         </form>
+
+        <div class="security-notice">
+            <i class="fas fa-shield-alt"></i>
+            <span>Seus dados estão protegidos</span>
+        </div>
 
         <div class="footer">
             <?php if ($modo_cliente): ?>

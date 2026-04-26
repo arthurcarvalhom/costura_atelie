@@ -67,11 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $acao = 'listar';
             }
         }
-    } elseif ($acao_form === 'atualizar_status' && $id_pedido) {
+    } elseif ($acao_form === 'atualizar_status') {
+        $pedido_id = intval($_POST['id_pedido'] ?? $id_pedido ?? 0);
         $novo_status = limpar_entrada($_POST['status'] ?? '');
-        if (atualizar_status_pedido($id_pedido, $novo_status)) {
-            $mensagem = 'Status do pedido atualizado!';
-            $tipo_mensagem = 'success';
+        
+        if ($pedido_id && $novo_status && atualizar_status_pedido($pedido_id, $novo_status)) {
+            header('Location: ?id=' . $pedido_id);
+            exit();
+        } else {
+            $mensagem = 'Erro ao atualizar status do pedido';
+            $tipo_mensagem = 'danger';
         }
     }
 }
@@ -219,6 +224,8 @@ $produtos = obter_produtos();
                     <select name="status" id="nova_status" style="flex: 1;" onchange="this.form.submit()">
                         <option value="pendente" <?php if ($pedido_detalhe['status'] === 'pendente') echo 'selected'; ?>>Pendente</option>
                         <option value="em_producao" <?php if ($pedido_detalhe['status'] === 'em_producao') echo 'selected'; ?>>Em Produção</option>
+                        <option value="em_caminho" <?php if ($pedido_detalhe['status'] === 'em_caminho') echo 'selected'; ?>>A Caminho</option>
+                        <option value="atrasado" <?php if ($pedido_detalhe['status'] === 'atrasado') echo 'selected'; ?>>Atrasado</option>
                         <option value="pronto" <?php if ($pedido_detalhe['status'] === 'pronto') echo 'selected'; ?>>Pronto</option>
                         <option value="entregue" <?php if ($pedido_detalhe['status'] === 'entregue') echo 'selected'; ?>>Entregue</option>
                         <option value="cancelado" <?php if ($pedido_detalhe['status'] === 'cancelado') echo 'selected'; ?>>Cancelado</option>
@@ -348,8 +355,11 @@ $produtos = obter_produtos();
                 <option value="">Todos os Status</option>
                 <option value="pendente" <?php if ($filtro_status === 'pendente') echo 'selected'; ?>>Pendente</option>
                 <option value="em_producao" <?php if ($filtro_status === 'em_producao') echo 'selected'; ?>>Em Produção</option>
+                <option value="em_caminho" <?php if ($filtro_status === 'em_caminho') echo 'selected'; ?>>A Caminho</option>
+                <option value="atrasado" <?php if ($filtro_status === 'atrasado') echo 'selected'; ?>>Atrasado</option>
                 <option value="pronto" <?php if ($filtro_status === 'pronto') echo 'selected'; ?>>Pronto</option>
                 <option value="entregue" <?php if ($filtro_status === 'entregue') echo 'selected'; ?>>Entregue</option>
+                <option value="cancelado" <?php if ($filtro_status === 'cancelado') echo 'selected'; ?>>Cancelado</option>
             </select>
         </div>
 
@@ -389,6 +399,8 @@ $produtos = obter_produtos();
                             $status_colors = [
                                 'pendente' => 'warning',
                                 'em_producao' => 'info',
+                                'em_caminho' => 'secondary',
+                                'atrasado' => 'danger',
                                 'pronto' => 'success',
                                 'entregue' => 'success',
                                 'cancelado' => 'danger'
@@ -396,6 +408,8 @@ $produtos = obter_produtos();
                             $status_label = [
                                 'pendente' => 'Pendente',
                                 'em_producao' => 'Em Produção',
+                                'em_caminho' => 'A Caminho',
+                                'atrasado' => 'Atrasado',
                                 'pronto' => 'Pronto',
                                 'entregue' => 'Entregue',
                                 'cancelado' => 'Cancelado'

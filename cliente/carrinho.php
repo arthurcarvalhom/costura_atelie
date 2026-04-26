@@ -84,69 +84,75 @@ $titulo_pagina = 'Carrinho';
 ?>
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
-<div class="carrinho-hero">
-    <h1><i class="fas fa-shopping-cart"></i> Carrinho de Compras</h1>
-    <p>Bem-vindo, <?php echo htmlspecialchars($cliente_nome); ?>!</p>
-</div>
-
-<div class="carrinho-container">
+<div class="cart-container">
+    <h1 class="cart-title">🛒 Carrinho de Compras</h1>
+    
+    <div class="steps">
+        <div class="step active">Carrinho</div>
+        <div class="step">Dados</div>
+        <div class="step">Pagamento</div>
+        <div class="step">Finalizado</div>
+    </div>
+    
     <?php if (count($itens_carrinho) == 0): ?>
-        <div class="carrinho-vazio">
-            <i class="fas fa-shopping-bag"></i>
-            <p>Seu carrinho está vazio</p>
-            <a href="<?php echo SITE_URL; ?>public/index.php" class="btn btn-primary">
+        <div class="carrinho-vazio" style="text-align: center; background: #fff; padding: 50px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <i class="fas fa-shopping-bag" style="font-size: 3rem; color: #ccc;"></i>
+            <p style="font-size: 1.2rem; color: #666; margin: 20px 0;">Seu carrinho está vazio</p>
+            <a href="<?php echo SITE_URL; ?>public/index.php" class="btn-continue">
                 <i class="fas fa-arrow-left"></i> Continuar Comprando
             </a>
         </div>
     <?php else: ?>
         <form id="carrinho-form" method="POST" action="<?php echo SITE_URL; ?>cliente/carrinho.php">
-            <div class="carrinho-itens">
-                <div class="carrinho-header">
-                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <div class="products">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600; color: #333;">
                         <input type="checkbox" id="selecionar-todos" style="width: 18px; height: 18px;">
-                        <span style="font-weight: 600; color: #333;">Selecionar Todos</span>
+                        <span>Selecionar Todos</span>
                     </label>
                 </div>
                 <?php foreach ($itens_carrinho as $item): ?>
-                    <div class="carrinho-item">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <input type="checkbox" name="itens_selecionados[]" value="<?php echo $item['id']; ?>" class="item-checkbox" style="width: 18px; height: 18px;" checked>
-                            <div class="item-info">
-                                <div class="item-nome"><?php echo htmlspecialchars($item['produto_nome']); ?></div>
-                                <div class="item-detalhes">
-                                    Quantidade: <strong><?php echo $item['quantidade']; ?></strong> | 
-                                    Preço unitário: <strong><?php echo formatar_moeda($item['preco_unitario']); ?></strong>
-                                </div>
+                    <div class="product-card">
+                        <div class="product-info">
+                            <input type="checkbox" name="itens_selecionados[]" value="<?php echo $item['id']; ?>" class="product-checkbox item-checkbox" checked>
+                            <div class="product-details">
+                                <h3><?php echo htmlspecialchars($item['produto_nome']); ?></h3>
+                                <p>Quantidade: <strong><?php echo $item['quantidade']; ?></strong> | Preço unitário: <strong><?php echo formatar_moeda($item['preco_unitario']); ?></strong></p>
                             </div>
                         </div>
-                        <div class="item-preco-total">
+                        <div class="product-price">
                             <?php echo formatar_moeda($item['quantidade'] * $item['preco_unitario']); ?>
                         </div>
-                        <a href="<?php echo SITE_URL; ?>cliente/carrinho.php?remover=<?php echo $item['id']; ?>" class="btn-remover" onclick="return confirm('Tem certeza que deseja remover este item?')">
+                        <a href="<?php echo SITE_URL; ?>cliente/carrinho.php?remover=<?php echo $item['id']; ?>" class="remove-btn" onclick="return confirm('Tem certeza que deseja remover este item?')">
                             <i class="fas fa-trash"></i> Remover
                         </a>
                     </div>
                 <?php endforeach; ?>
             </div>
 
-        <div class="carrinho-resumo">
-            <div class="resumo-linha">
-                <span>Subtotal (<span id="itens-count"><?php echo count($itens_carrinho); ?></span> itens):</span>
-                <span id="subtotal"><?php echo formatar_moeda($total); ?></span>
+            <div class="summary">
+                <h2>Resumo do Pedido</h2>
+                <div class="summary-item">
+                    <span>Subtotal (<span id="itens-count"><?php echo count($itens_carrinho); ?></span> itens):</span>
+                    <span id="subtotal"><?php echo formatar_moeda($total); ?></span>
+                </div>
+                <div class="summary-item">
+                    <span>Frete:</span>
+                    <span>Grátis</span>
+                </div>
+                <div class="summary-item total">
+                    <span>Total:</span>
+                    <span id="total"><?php echo formatar_moeda($total); ?></span>
+                </div>
             </div>
-            <div class="resumo-total">
-                Total: <span id="total"><?php echo formatar_moeda($total); ?></span>
-            </div>
-        </div>
 
-        <div class="carrinho-acoes">
-            <a href="<?php echo SITE_URL; ?>public/index.php" class="btn-voltar">
-                <i class="fas fa-arrow-left"></i> Continuar Comprando
-            </a>
-            <button type="submit" name="checkout" value="1" class="btn-finalizar" id="btn-finalizar">
+            <button type="submit" name="checkout" value="1" class="checkout-btn" id="btn-finalizar">
                 <i class="fab fa-whatsapp"></i> Finalizar Compra (<span id="checkout-count"><?php echo count($itens_carrinho); ?></span> itens)
             </button>
-        </div>
+            
+            <div class="security">
+                🔒 Compra 100% segura
+            </div>
         </form>
     <?php endif; ?>
 
