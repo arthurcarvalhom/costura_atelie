@@ -103,6 +103,8 @@ CREATE TABLE clientes (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100),
     telefone VARCHAR(20),
+    senha VARCHAR(255) DEFAULT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -135,6 +137,23 @@ CREATE TABLE pedido_itens (
     FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
+
+-- ==========================================
+-- Tabela: Carrinho do Cliente
+-- ==========================================
+CREATE TABLE IF NOT EXISTS carrinho (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    cliente_id INT NOT NULL,
+    produto_id INT NOT NULL,
+    quantidade INT NOT NULL DEFAULT 1,
+    preco_unitario DECIMAL(10, 2) NOT NULL,
+    data_adicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_carrinho (cliente_id, produto_id),
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE,
+    FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_carrinho_cliente ON carrinho(cliente_id);
 
 -- ==========================================
 -- Tabela: Agenda / Produção
