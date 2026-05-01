@@ -5,8 +5,8 @@
 USE costura_atelier;
 
 -- Inserir usuário admin
-INSERT INTO usuarios (nome, email, senha, ativo) VALUES 
-('Administrador', 'admin@costura.com', '$2y$10$92IXUNpkm37Oy7WRRF39He3DlH.d41Ris6sFW9DfV0I5F2H5FKHVS', 1);
+INSERT INTO usuarios (nome, email, senha, cpf, ativo) VALUES 
+('Administrador', 'admin@costura.com', '$2y$10$92IXUNpkm37Oy7WRRF39He3DlH.d41Ris6sFW9DfV0I5F2H5FKHVS', '12345678909', 1);
 -- Senha: admin123 (hash bcrypt)
 
 -- Inserir clientes de exemplo

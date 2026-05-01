@@ -67,12 +67,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $senha = $_POST['senha'] ?? '';
         $confirmar_senha = $_POST['confirmar_senha'] ?? '';
+        $cpf = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
 
         if (empty($nome)) {
             $mensagem = 'Nome é obrigatório';
             $tipo_mensagem = 'error';
         } elseif (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $mensagem = 'Email inválido';
+            $tipo_mensagem = 'error';
+        } elseif (empty($cpf)) {
+            $mensagem = 'CPF é obrigatório';
+            $tipo_mensagem = 'error';
+        } elseif (strlen($cpf) !== 11) {
+            $mensagem = 'CPF deve conter 11 dígitos';
             $tipo_mensagem = 'error';
         } elseif (strlen($senha) < 6) {
             $mensagem = 'Senha deve ter pelo menos 6 caracteres';
@@ -90,16 +97,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mensagem = 'Este email já está registrado como administrador';
                 $tipo_mensagem = 'error';
             } else {
-                $senha_hash = password_hash($senha, PASSWORD_BCRYPT);
-                $stmt = $conn->prepare("INSERT INTO usuarios (nome, email, senha, ativo) VALUES (?, ?, ?, 1)");
-                $stmt->bind_param('sss', $nome, $email, $senha_hash);
+                $checkCpf = $conn->prepare("SELECT id FROM usuarios WHERE cpf = ? LIMIT 1");
+                $checkCpf->bind_param('s', $cpf);
+                $checkCpf->execute();
+                $checkCpf->store_result();
 
-                if ($stmt->execute()) {
-                    $mensagem = '✅ Usuário criado com sucesso! Faça login para continuar.';
-                    $tipo_mensagem = 'success';
-                } else {
-                    $mensagem = '❌ Erro ao criar usuário: ' . $conn->error;
+                if ($checkCpf->num_rows > 0) {
+                    $mensagem = 'Este CPF já está registrado no sistema';
                     $tipo_mensagem = 'error';
+                } else {
+                    $senha_hash = password_hash($senha, PASSWORD_BCRYPT);
+                    $stmt = $conn->prepare("INSERT INTO usuarios (nome, email, senha, cpf, ativo) VALUES (?, ?, ?, ?, 1)");
+                    $stmt->bind_param('ssss', $nome, $email, $senha_hash, $cpf);
+
+                    if ($stmt->execute()) {
+                        $mensagem = '✅ Usuário criado com sucesso! Faça login para continuar.';
+                        $tipo_mensagem = 'success';
+                    } else {
+                        $mensagem = '❌ Erro ao criar usuário: ' . $conn->error;
+                        $tipo_mensagem = 'error';
+                    }
                 }
             }
         }
@@ -435,6 +452,11 @@ $form_action = 'criar_usuario.php?tipo=' . $tipo;
                     <input type="password" id="confirmar_senha" name="confirmar_senha" required placeholder="Repita a senha">
                 </div>
             <?php else: ?>
+                <div class="form-group">
+                    <label for="cpf">CPF *</label>
+                    <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00" maxlength="14">
+                </div>
+
                 <div class="form-group">
                     <label for="senha">Senha *</label>
                     <input type="password" id="senha" name="senha" required placeholder="Mínimo 6 caracteres">
